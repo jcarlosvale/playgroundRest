@@ -15,6 +15,7 @@ import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
+@CrossOrigin(origins="http://localhost:4200")
 public class StockTradeRestController {
 
     private final StockTradeService stockTradeService;

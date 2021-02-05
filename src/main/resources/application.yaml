@@ -8,6 +8,10 @@ spring:
     username: sa
     password:
     driver-class-name: org.h2.Driver
+  security:
+    user:
+      name: in28minutes
+      password: dummy
 feign:
   hystrix:
     enabled: true
@@ -20,7 +24,8 @@ feign:
 
 logging:
   level:
-    root: debug
+    root: info
+
 weather:
   id: "someID"
   url: "someURL"
