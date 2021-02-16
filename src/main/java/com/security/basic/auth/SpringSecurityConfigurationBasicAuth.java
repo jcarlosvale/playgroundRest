@@ -1,4 +1,4 @@
-package com.playground.security.basic.auth;
+package com.security.basic.auth;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;

@@ -1,16 +1,28 @@
 package com.playground.service;
 
 import com.playground.dto.Todo;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileCopyUtils;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Service
 public class TodoHardCodedService {
     private static List<Todo> todos = new ArrayList<>();
     private static int idCounter = 0;
+
+    @Value("classpath:queries/feature-list-retrieve-all-by-client-id.sql")
+    private Resource resource;
 
     static {
         todos.add(new Todo(++idCounter, "in28minutess", "Learn to Dance", new Date(), false));
@@ -49,5 +61,13 @@ public class TodoHardCodedService {
             }
         }
         return null;
+    }
+
+    public String getSQL() {
+        try (Reader reader = new InputStreamReader(resource.getInputStream(), UTF_8)) {
+            return FileCopyUtils.copyToString(reader);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 }
