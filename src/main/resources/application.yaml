@@ -24,7 +24,7 @@ feign:
 
 logging:
   level:
-    root: info
+    root: debug
 
 weather:
   id: "someID"
