@@ -20,9 +20,15 @@ feign:
 
 logging:
   level:
-    root: debug
+    root: info
 weather:
   id: "someID"
   url: "someURL"
   absoluteFilePath: "someFile"
   fixedDelayInMilli: 3600000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
