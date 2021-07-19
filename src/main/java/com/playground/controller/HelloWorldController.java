@@ -5,7 +5,6 @@ import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.DistributionSummary;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
-import org.HdrHistogram.Histogram;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +21,8 @@ public class HelloWorldController {
     private final MeterRegistry meterRegistry;
 
     //Prometheus counter example
-    private final Counter counter;
+    private final Counter counter_OK;
+    private final Counter counter_FAIL;
 
     //Prometheus gauge example
     private final Gauge gauge;
@@ -34,21 +34,27 @@ public class HelloWorldController {
     private final DistributionSummary summary;
 
     public HelloWorldController(MeterRegistry meterRegistry) {
-        counter = Counter
-                .builder("requests_total")
+        counter_OK = Counter
+                .builder("requests_count")
                 .description("indicates the total requests")
                 .tag("status_code", "200")
                 .register(meterRegistry);
 
+        counter_FAIL = Counter
+                .builder("requests_count")
+                .description("indicates the total error requests")
+                .tag("status_code", "500")
+                .register(meterRegistry);
+
         gauge = Gauge
-                .builder("gauge_random", Math::random)
+                .builder("user_logged", () -> 500 + Math.round(50 * Math.random()))
                 .description("indicates the gauge usage")
                 .register(meterRegistry);
 
         histogram = DistributionSummary
-                .builder("histogram_random")
-                .description("indicates the random numbers distribution")
-                .sla(1,2,3,4,5)
+                .builder("response_time")
+                .description("indicates the histogram usage")
+                .sla(200,300,400,500, 1000)
                 .register(meterRegistry);
 
         summary = DistributionSummary
@@ -64,9 +70,18 @@ public class HelloWorldController {
     @GetMapping(path = "/hello-world", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> helloWorld() {
 
-        double random_value = Math.random() * 10;
-        counter.increment();
-        histogram.record(random_value);
+        //Simulate error rate
+        double errorRate = 0.05;
+        double random_value = Math.random();
+        if (random_value <= errorRate) {
+            counter_FAIL.increment();
+        } else {
+            counter_OK.increment();
+        }
+
+        int max = 600;
+        int min = 50;
+        histogram.record((int) ((Math.random() * (max - min)) + min));
         summary.record(random_value);
 
         return new ResponseEntity<>("Hello World 1", HttpStatus.OK);
