@@ -1,17 +1,24 @@
 server:
-  port: 8080
+  port: 8081
 spring:
   jpa:
     show-sql: true
   datasource:
-    url: jdbc:h2:mem:testdb;
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
+#    url: jdbc:h2:mem:testdb;
+#    username: sa
+#    password:
+#    driver-class-name: org.h2.Driver
+
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
   security:
     user:
       name: in28minutes
       password: dummy
+  flyway:
+    schemas: infarma
 feign:
   hystrix:
     enabled: true
